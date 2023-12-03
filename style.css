@@ -1,0 +1,28 @@
+form {
+    width: 300px;
+    margin: 0 auto;
+}
+
+label, input {
+    margin-bottom: 10px;
+}
+
+#search-panel {
+    margin-bottom: 10px;
+}
+
+#map {
+    height: 500px;
+    width: 75%;
+    float: left;
+}
+
+#info-panel {
+    height: 500px;
+    width: 25%;
+    float: right;
+    overflow: auto;
+    background-color: #f1f1f1;
+    padding: 10px;
+    box-sizing: border-box;
+}

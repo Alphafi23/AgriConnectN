@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Metadata for responsive design and character setting -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Page Title -->
+    <title>AgriConnect Map</title>
+
+    <!-- Google Maps API -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBmp2CP6sxMNC912WtZYpCFe3P7i9P5qiU"></script>
+
+    <!-- Custom styles -->
+    <style>
+
+        /* Style for map and info panel */
+        #map {
+            height: 500px;
+            width: 75%;
+            float: left;
+        }
+        #info-panel {
+            height: 500px;
+            width: 25%;
+            float: right;
+            overflow: auto;
+            background-color: rgb(241, 241, 241);
+            padding: 10px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    
+
+    <!-- Main Content -->
+    <h3>Agri Map</h3><hr>
+
+    <!-- Crop Name Dropdown -->
+    <div class="row mb-3">
+        <div class="col-sm-6">
+            <select name="crop-name" class="form=control" id="crop-name">
+                <!-- Dropdown options -->
+                <option value=""> select crop name </option>
+                    <option value="Eggplant"> Eggplant (Talong) </option>
+                    <option value="Bitter Gourd"> Bitter Gourd (Ampalaya) </option>
+                    <option value="Okra"> Okra </option>
+                    <option value="Rice"> Rice (Bigas) </option>
+                    <option value="Corn"> Corn (Mais)</option>
+                    <option value="String Beans"> String Beans (Sitaw) </option>
+                    <option value="Squash"> Squash (Kalabasa)</option>
+                    <option value="Sweet Potato"> Sweet Potato (Kamote) </option>
+                    <option value="Tomato"> Tomato </option>
+                    <option value="Peppers"> Peppers (Sili) </option>
+                    <option value="Cabbage"> Cabbage (Repolyo) </option>
+                    <option value="Onion"> Onion (Sibuyas) </option>
+                    <option value="Garlic">Garlic (bawang) </option>
+                    <option value="Grapes"> Grapes (Ubas) </option>
+                    <option value="Banana"> Banana (Saging)</option>
+                    <option value="Papaya"> Papaya </option>
+                    <option value="Strawberry"> Strawberry </option>
+                    <option value="Melon"> Melon </option>
+            </select>
+        </div> 
+    </div><br>
+
+    <!-- Crop Status Dropdown -->
+    <div class="row mb-3">
+        <div class="col-sm-6">
+            <select name="crop-status" class="form=control" id="crop-status">
+                <!-- Dropdown options -->
+                <option value=""> Crop Status </option>
+            <option value="seedling"> Seedling </option>
+            <option value="sprouting"> Sprouting </option>
+            <option value="ripening"> Ripening </option>
+            <option value="harvesting"> Harvesting </option>
+            <option value="withered"> Withered </option>
+            </select>
+        </div> 
+    </div><br>
+
+    <!-- Search Button -->
+    <div id="search-panel">
+        <a href="admin_page.php" class="form-btn">Back </a>
+        <button onclick="filterFarms()">Search</button>
+    </div>
+    
+
+    <!-- Map and Info Panel Containers -->
+    <div id="map"></div>
+    <div id="info-panel"></div>
+
+    <!-- Link to external JavaScript file -->
+    <script src="script.js"></script>
+<script>
+    // This script manages the map and associated functionalities
+
+// Object to store icons based on crop status, fetched from the server
+var statusIcons = {}; 
+
+// Function to fetch status icons from the server
+function fetchStatusIcons() {
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            statusIcons = JSON.parse(this.responseText);
+        }
+    };
+    xhr.open("GET", "get_icons.php", true);
+    xhr.send();
+}
+
+// Call this function when the page loads to populate the statusIcons object
+fetchStatusIcons();
+
+// Function to get the appropriate icon for a given crop status
+function getIconForCropStatus(crop_status) {
+    return statusIcons[crop_status] || statusIcons['default']; 
+}
+
+// Function to display farms in a selected barangay in the info panel
+function showFarmsInBarangay(barangay) {
+    var farms = farmersByBarangay[barangay];
+    var infoPanel = document.getElementById('info-panel');
+    infoPanel.innerHTML = `<h4>Farms in ${barangay}</h4><ul>`;
+    farms.forEach(farmer => {
+        var statusIcon = getIconForCropStatus(farmer.crop_status);
+        infoPanel.innerHTML += `
+            <li>
+                <img src="${statusIcon}" style="width: 20px; height: 20px; vertical-align: middle;">
+                <a href="#" onclick="showFarmerDetails('${farmer.ID}'); return false;">
+                    ${farmer.farm_n || 'Unknown Farm'}
+                </a>
+            </li>
+        `;
+    });
+    infoPanel.innerHTML += `</ul>`;
+}
+
+</script>
+</body>
+</html>
